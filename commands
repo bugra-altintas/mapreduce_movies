@@ -1,0 +1,16 @@
+hadoop com.sun.tools.javac.Main *.java
+jar cf Hw3.jar *.class
+
+hadoop jar Hw3.jar Hw3 total movies.csv output_total
+hadoop jar Hw3.jar Hw3 average movies.csv output_average
+hadoop jar Hw3.jar Hw3 employment movies.csv output_employment
+hadoop jar Hw3.jar Hw3 ratescore movies.csv output_ratescore
+hadoop jar Hw3.jar Hw3 genrescore movies.csv output_genrescore
+
+
+hadoop fs -cat output_total/part-00000 > total_output
+hadoop fs -cat output_average/part-00000 > average_output
+hadoop fs -cat output_employment/part-00000 > employment_output
+hadoop fs -cat output_ratescore/part-00000 > ratescore_output
+hadoop fs -cat output_genrescore/part-00000 > genrescore_output
+
