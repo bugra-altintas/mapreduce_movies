@@ -3,27 +3,53 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
 
-
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
 public class Hw3 {
     public static void main(String[] args) throws IOException {
 
-        //convert csv to tsv
-        String command = "python3 csv2tsv.py " + args[1];
+        // arrange movies.tsv
+        String input_path = args[1].replace(".csv", ".tsv");
+
+        //if output of "hadoop fs -ls" does not contain input_path, then copy input_path to hdfs
+        String command = "hadoop fs -ls";
         Process p = Runtime.getRuntime().exec(command);
         try {
             p.waitFor();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        /* 
-        FileSystem hdfs = FileSystem.get(conf);
-        if (hdfs.exists(outputDir))
-          hdfs.delete(outputDir, true);
-        */
-        String input_path = args[1].replace(".csv", ".tsv");
+        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));  
+        String line = "";
+        while ((line = reader.readLine())!= null) {
+            if(line.contains(input_path)) {
+                break;
+            }
+        }
+        
+        if(line == null) {
+            //convert csv to tsv
+            command = "python3 csv2tsv.py " + args[1];
+            p = Runtime.getRuntime().exec(command);
+            try {
+                p.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            command = "hadoop fs -put " + input_path;
+            p = Runtime.getRuntime().exec(command);
+            try {
+                p.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // create job
         JobClient client = new JobClient();
 
         JobConf job_conf = new JobConf(Hw3.class);
