@@ -11,43 +11,7 @@ import java.io.IOException;
 public class Hw3 {
     public static void main(String[] args) throws IOException {
 
-        // arrange movies.tsv
         String input_path = args[1].replace(".csv", ".tsv");
-
-        //if output of "hadoop fs -ls" does not contain input_path, then copy input_path to hdfs
-        String command = "hadoop fs -ls";
-        Process p = Runtime.getRuntime().exec(command);
-        try {
-            p.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));  
-        String line = "";
-        while ((line = reader.readLine())!= null) {
-            if(line.contains(input_path)) {
-                break;
-            }
-        }
-        
-        if(line == null) {
-            //convert csv to tsv
-            command = "python3 csv2tsv.py " + args[1];
-            p = Runtime.getRuntime().exec(command);
-            try {
-                p.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            command = "hadoop fs -put " + input_path;
-            p = Runtime.getRuntime().exec(command);
-            try {
-                p.waitFor();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         // create job
         JobClient client = new JobClient();

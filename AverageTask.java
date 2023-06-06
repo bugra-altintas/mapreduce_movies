@@ -26,7 +26,9 @@ public class AverageTask {
 
             float average = sum / count;
 
-            output.collect(key, new FloatWritable(average));
+            
+
+            output.collect(new Text("average_runtime"), new FloatWritable(average));
 
         }
 

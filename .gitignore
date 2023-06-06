@@ -1,2 +1,5 @@
 *.test
 *.class
+*.tsv
+*_output
+*.jar
